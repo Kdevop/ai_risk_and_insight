@@ -1,3 +1,5 @@
+mistralai
+
 flask
 gunicorn
 python-dotenv
@@ -5,6 +7,7 @@ python-dotenv
 sqlalchemy
 cloud-sql-python-connector
 pg8000
+psycopg2-binary
 
 openai
 requests
@@ -16,3 +19,11 @@ lime
 shap
 
 plotly
+
+# --- Added for FastAPI backend ---
+fastapi
+uvicorn
+
+# --- Added for SQLAlchemy 2.0 compatibility (optional but recommended) ---
+greenlet
+
