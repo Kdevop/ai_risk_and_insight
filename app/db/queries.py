@@ -1,5 +1,6 @@
 from app.db.connection import query
 import logging
+import re
 from decimal import Decimal
 from datetime import datetime, date
 
@@ -8,11 +9,9 @@ logger = logging.getLogger(__name__)
 # -----------------------------
 # SQL VALIDATION
 # -----------------------------
-import re
 
 def validate_sql(sql: str):
     print(f"Validating SQL: {sql}")
-
     forbidden = ["drop", "delete", "insert", "update", "alter", "truncate", "--"]
 
     lowered = sql.lower()
@@ -30,14 +29,11 @@ def validate_sql(sql: str):
 
     return None
 
-
-
 # -----------------------------
 # LIMIT ENFORCEMENT
 # -----------------------------
-def enforce_limit(sql: str, limit: int = 50):
+def enforce_limit(sql: str, limit: int = 20):
     print(f"Enforcing LIMIT on SQL: {sql}")
-
     lowered = sql.lower()
 
     # If LIMIT already exists, do nothing
@@ -53,51 +49,22 @@ def enforce_limit(sql: str, limit: int = 50):
     # Append LIMIT safely
     return response
 
-
 # -----------------------------
 # RESULT CLEANING
 # -----------------------------
+def normalise_value(v):
+    if isinstance(v, Decimal):
+        return float(v)
+    if isinstance(v, (datetime, date)):
+        return v.isoformat()
+    return v
 
-def clean_results(rows):
-    """
-    Converts SQLAlchemy Row objects into JSON-safe dicts.
-    Handles:
-    - Decimal → float
-    - datetime/date → ISO strings
-    """
-
-    cleaned = []
-
-    if not rows:
-        return {"row_count": 0, "rows": []}
-
-    for row in rows:
-        # SQLAlchemy Row → dict
-        if hasattr(row, "_mapping"):
-            data = dict(row._mapping)
-        else:
-            # fallback: treat as tuple with no column names
-            # but this should never happen with SQLAlchemy
-            data = dict(row)
-
-        # Convert values
-        for k, v in data.items():
-            if isinstance(v, Decimal):
-                data[k] = float(v)
-            elif isinstance(v, (datetime, date)):
-                data[k] = v.isoformat()
-
-        cleaned.append(data)
-
-    return {
-        "row_count": len(cleaned),
-        "rows": cleaned
-    }
 
 # -----------------------------
 # SQL EXECUTION
 # -----------------------------
 def execute_sql(sql: str):
+    print(f"Received SQL for execution: {sql}")
     """
     Execute the SQL query and return results as a list of dicts.
     """
@@ -116,16 +83,15 @@ def execute_sql(sql: str):
 
     try:
         # 3. Execute the query
-        rows = query(sql)
-
-        # 4. Clean and structure results
-        cleaned = clean_results(rows)
-        print(f"Cleaned results: {cleaned}")
+        rows, cursor = query(sql)
+        columns = [desc[0] for desc in cursor.description]
+        list_rows = [[normalise_value(v) for v in row] for row in rows]
 
         return {
             "sql": sql,
-            "row_count": cleaned["row_count"],
-            "rows": cleaned["rows"]
+            "columns": columns,
+            "rows": list_rows,
+            "row_count": len(list_rows)
         }
 
     except Exception as e:

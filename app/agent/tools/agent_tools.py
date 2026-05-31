@@ -1,12 +1,19 @@
 from app.db.queries import execute_sql
 
-def agent_generated_query(user_input: str) -> str:
-    """
-    This function is a placeholder for the logic that would generate a SQL query based on user input.
-    In a real implementation, this could involve an LLM or some other logic to convert natural language into SQL.
-    For now, it simply returns a hardcoded query.
-    """
-    return "SELECT first_name, last_name FROM customers LIMIT 5;"
+def get_all_customers():
+    print("Executing get_all_customers tool")
+    sql = f"""
+    SELECT 
+        c.customer_id, 
+        c.first_name, 
+        c.last_name, 
+        c.dob, c.email, 
+        c.phone, 
+        c.risk_tier 
+    FROM customers c
+    LIMIT 15;"""
+  
+    return execute_sql(sql)
 
 
 # 1. CUSTOMER OVERVIEW
@@ -26,12 +33,7 @@ def get_customer_overview(customer_id: int):
     WHERE c.customer_id = {customer_id}
     GROUP BY c.customer_id;
     """
-    result = execute_sql(sql)
-    return {
-        "sql": result["sql"],
-        "row_count": result["row_count"],
-        "rows": result["rows"]
-    }
+    return execute_sql(sql)
 
 # 2. CUSTOMER ACCOUNTS
 def get_customer_accounts(customer_id: int):
@@ -45,12 +47,7 @@ def get_customer_accounts(customer_id: int):
     WHERE customer_id = {customer_id}
     ORDER BY opened_at DESC;
     """
-    result = execute_sql(sql)
-    return {
-        "sql": result["sql"],
-        "row_count": result["row_count"],
-        "rows": result["rows"]
-    }
+    return execute_sql(sql)
 
 # 3. TOTAL BALANCE
 def get_total_balance(customer_id: int):
@@ -60,12 +57,7 @@ def get_total_balance(customer_id: int):
     FROM accounts
     WHERE customer_id = {customer_id};
     """
-    result = execute_sql(sql)
-    return {
-        "sql": result["sql"],
-        "row_count": result["row_count"],
-        "rows": result["rows"]
-    }
+    return execute_sql(sql)
 
 
 # 4. TOTAL SPEND
@@ -77,12 +69,7 @@ def get_total_spend(customer_id: int):
     JOIN accounts a ON t.account_id = a.account_id
     WHERE a.customer_id = {customer_id};
     """
-    result = execute_sql(sql)
-    return {
-        "sql": result["sql"],
-        "row_count": result["row_count"],
-        "rows": result["rows"]
-    }
+    return execute_sql(sql)
 
 
 # 5. MONTHLY SPEND
@@ -98,12 +85,7 @@ def get_monthly_spend(customer_id: int):
     ORDER BY month DESC
     LIMIT 12;
     """
-    result = execute_sql(sql)
-    return {
-        "sql": result["sql"],
-        "row_count": result["row_count"],
-        "rows": result["rows"]
-    }
+    return execute_sql(sql)
 
 
 # 6. SPEND BY CATEGORY
@@ -118,13 +100,7 @@ def get_spend_by_category(customer_id: int):
     GROUP BY t.category
     ORDER BY total_spend DESC;
     """
-    result = execute_sql(sql)
-    print(result)
-    return {
-        "sql": result["sql"],
-        "row_count": result["row_count"],
-        "rows": result["rows"]
-    }
+    return execute_sql(sql)
 
 
 # 7. CUSTOMER ALERTS
@@ -140,12 +116,7 @@ def get_customer_alerts(customer_id: int):
     WHERE customer_id = {customer_id}
     ORDER BY created_at DESC;
     """
-    result = execute_sql(sql)
-    return {
-        "sql": result["sql"],
-        "row_count": result["row_count"],
-        "rows": result["rows"]
-    }
+    return execute_sql(sql)
 
 
 # 8. LATEST RISK SCORE
@@ -160,14 +131,14 @@ def get_customer_latest_risk(customer_id: int):
     ORDER BY generated_at DESC
     LIMIT 3;
     """
-    result = execute_sql(sql)
-    return {
-        "sql": result["sql"],
-        "row_count": result["row_count"],
-        "rows": result["rows"]
-    }
+    return execute_sql(sql)
+
+# 9. AGENT WRITEN CUSTOM SQL
+def run_sql_query(query: str):
+    return execute_sql(query) 
 
 TOOL_REGISTRY = {
+    "get_all_customers": get_all_customers,
     "get_customer_overview": get_customer_overview,
     "get_customer_accounts": get_customer_accounts,
     "get_total_balance": get_total_balance,
@@ -175,5 +146,6 @@ TOOL_REGISTRY = {
     "get_monthly_spend": get_monthly_spend,
     "get_spend_by_category": get_spend_by_category,
     "get_customer_alerts": get_customer_alerts,
-    "get_customer_latest_risk": get_customer_latest_risk
+    "get_customer_latest_risk": get_customer_latest_risk,
+    "run_sql_query": run_sql_query
 }

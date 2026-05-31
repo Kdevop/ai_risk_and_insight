@@ -313,6 +313,27 @@
 </div>
 
 <script>
+
+function extractLatestSQL(history) {
+    for (let i = history.length - 1; i >= 0; i--) {
+        const msg = history[i];
+        if (msg.role === "tool") {
+            try {
+                const data = JSON.parse(msg.content);
+
+                // New format: detect columns + rows
+                if (data.columns && data.rows) {
+                    return data;
+                }
+
+            } catch (e) {
+                console.error("Failed to parse tool content", e);
+            }
+        }
+    }
+    return null;
+}
+
 function showThinking() {
     const t = document.getElementById("thinking");
     t.style.display = "flex";
@@ -363,37 +384,48 @@ function toggleSQL() {
     }
 }
 
-function renderResultsTable(rows) {
+function renderResultsTable(data) {
     const box = document.getElementById("results-box");
     box.innerHTML = "";
 
-    if (!rows || rows.length === 0) {
+    if (!data || !data.rows || data.rows.length === 0) {
         box.textContent = "No results.";
         return;
     }
 
     const table = document.createElement("table");
 
-    const header = document.createElement("tr");
-    Object.keys(rows[0]).forEach(col => {
+    // Header
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+
+    data.columns.forEach(col => {
         const th = document.createElement("th");
         th.textContent = col;
-        header.appendChild(th);
+        headerRow.appendChild(th);
     });
-    table.appendChild(header);
 
-    rows.forEach(row => {
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Body
+    const tbody = document.createElement("tbody");
+
+    data.rows.forEach(row => {
         const tr = document.createElement("tr");
-        Object.values(row).forEach(val => {
+        row.forEach(val => {
             const td = document.createElement("td");
             td.textContent = val;
             tr.appendChild(td);
         });
-        table.appendChild(tr);
+        tbody.appendChild(tr);
     });
+
+    table.appendChild(tbody);
 
     box.appendChild(table);
 }
+
 
 function sendMessage() {
     const input = document.getElementById("user-input");
@@ -415,18 +447,25 @@ function sendMessage() {
         hideThinking();
         addMessage("assistant", data.agent_response);
 
-        if (data.sql) {
-            document.getElementById("sql-box").textContent = data.sql;
-        }
+        const sqlData = extractLatestSQL(data.history);
 
-        if (data.rows) {
-            renderResultsTable(data.rows);
+        if (sqlData) {
+            // Update SQL panel (optional)
+            document.getElementById("sql-box").textContent =
+                sqlData.sql || "(SQL not shown for this tool)";
+
+            // Render table
+            renderResultsTable(sqlData);
+        } else {
+            document.getElementById("sql-box").textContent = "No SQL executed.";
+            renderResultsTable(null);
         }
     })
     .catch(err => {
-    hideThinking();
-    addMessage("assistant", "Something went wrong.");
-});
+        hideThinking();
+        addMessage("assistant", "Something went wrong.");
+    });
+
 }
 </script>
 

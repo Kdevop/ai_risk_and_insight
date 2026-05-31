@@ -1,5 +1,6 @@
 from flask import Flask, session
 from flask_session import Session
+from datetime import timedelta
 
 from app.routes.api import bp as api_bp
 from app.routes.home import home_bp as home_bp
@@ -26,7 +27,8 @@ def create_app():
     # --- SERVER-SIDE SESSION STORAGE ---
     app.config["SESSION_TYPE"] = "filesystem"
     app.config["SESSION_FILE_DIR"] = "./flask_session"
-    app.config["SESSION_PERMANENT"] = False
+    app.config["SESSION_PERMANENT"] = True
+    app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=24)
     Session(app)
     # -----------------------------------
 

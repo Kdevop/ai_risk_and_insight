@@ -9,15 +9,16 @@ LOCAL_DB_CONNECTION_STRING = os.getenv("LOCAL_DB_CONNECTION_STRING")
 engine = create_engine(LOCAL_DB_CONNECTION_STRING, future=True)
 
 def query(sql, params=None):
-    print(f"Executing SQL: {sql} with params: {params}")
-    with engine.connect() as conn:
-        result = conn.execute(text(sql), params or {})
-        rows = result.fetchall()
+    with engine.raw_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(sql, params or {})
+        rows = cursor.fetchall()
         engine.dispose()
-        return rows
+        return rows, cursor
 
 
 
+        
 #-----------------------------------
 #     Below is for cloud connection. Keep for now!
 #-----------------------------------
