@@ -1,25 +1,23 @@
-from flask import Blueprint, request, jsonify
-import requests
+from flask import Blueprint, request, session, jsonify
+from app.agent.agent import run_agent
 
 bp = Blueprint("api", __name__)
 
-FASTAPI_URL = "http://localhost:8000/agent"
-
 @bp.route("/chat", methods=["POST"])
 def chat():
-    print("Received request into flask routes api.py:", request.json)
+    data = request.json
+    user_message = data.get("message")
 
-    data = request.get_json()
-    user_message = data.get("message") if data else None
+    # Retrieve history from session (Flask stores it securely)
+    history = session.get("chat_history", [])
 
-    if not user_message:
-        return jsonify({"error": "No message provided"}), 400
+    # Run agent with history
+    result = run_agent(user_message, history)
 
-    response = requests.post(
-        FASTAPI_URL,
-        json={"message": user_message}
-    )
+    # Save updated history back into session
+    session["chat_history"] = result["history"]
 
-    return jsonify(response.json())
+    return jsonify(result)
+
 
 

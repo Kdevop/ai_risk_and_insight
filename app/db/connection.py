@@ -5,18 +5,18 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-
 LOCAL_DB_CONNECTION_STRING = os.getenv("LOCAL_DB_CONNECTION_STRING")
-engine = create_engine(LOCAL_DB_CONNECTION_STRING)
+engine = create_engine(LOCAL_DB_CONNECTION_STRING, future=True)
 
 def query(sql, params=None):
+    print(f"Executing SQL: {sql} with params: {params}")
     with engine.connect() as conn:
         result = conn.execute(text(sql), params or {})
-        return result.fetchall()
-    
-if __name__ == "__main__":
-    rows = query("SELECT * FROM customers LIMIT 5;")
-    print(rows)
+        rows = result.fetchall()
+        engine.dispose()
+        return rows
+
+
 
 #-----------------------------------
 #     Below is for cloud connection. Keep for now!

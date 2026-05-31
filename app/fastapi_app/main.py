@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from app.services.agent import run_agent
+from app.agent.agent import run_agent
 from app.db.connection import query
 
 app = FastAPI()
