@@ -24,6 +24,8 @@ plotly
 fastapi
 uvicorn
 
-# --- Added for SQLAlchemy 2.0 compatibility (optional but recommended) ---
+# --- Added for SQLAlchemy 2.0 compatibility  ---
 greenlet
+
+flask-session
 

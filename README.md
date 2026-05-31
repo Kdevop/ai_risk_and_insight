@@ -1,39 +1,88 @@
-# AI Risk & Insight Platform (Under Development)
+# 🏦 Banking Analytics Assistant
+A lightweight natural‑language analytics tool that turns user questions into SQL queries, executes them, and returns clear insights through a clean chat‑style UI.
 
-This repository contains the early-stage development of an AI-driven Risk & Insight platform.  
-The system is being built using:
+## 🚀 Overview
+Users can ask questions like:
+- List the accounts for a customer
+- Show monthly spend
+- View alerts
+- Summarise financial activity
 
-- **Flask** for the backend API  
-- **Google Cloud Run** for serverless deployment  
-- **Google Cloud SQL (PostgreSQL)** for data storage  
-- **Cloud SQL Python Connector** for secure database access  
-- **Python-based analytics** for risk scoring, explainability, and insights  
+The system:
+1. Interprets the question  
+2. Runs the correct SQL tool  
+3. Returns SQL + results  
+4. Generates a readable explanation  
+5. Displays everything in a modern UI  
 
-## Current Status
+## 🧠 Architecture
+Frontend:
+- HTML/CSS/JS (no frameworks)
+- Chat interface with Markdown rendering
+- Dark mode toggle
+- Thinking animation
+- SQL show/hide panel
+- Auto‑generated results table
 
-🚧 **This project is actively under development.**  
-Core infrastructure is being assembled, including:
+Backend:
+- Python + Flask
+- Agent loop with session history
+- Tool‑driven SQL execution
+- SQLite database (banking.db)
 
-- Flask application structure  
-- Cloud SQL connectivity  
-- Local development environment  
-- Initial test routes and diagnostics  
+Agent:
+- System prompt + tool registry
+- Executes SQL through Python tools
+- Produces structured, readable responses
 
-Major features such as the agentic workflow, analytics engine, and UI will be added in upcoming stages.
+## 🗂️ Project Structure
+/app  
+  /agent  
+    agent.py  
+    tools.py  
+    system_prompt.py  
+  /static  
+    index.html  
+  /db  
+    banking.db  
+app.py  
+README.md  
 
-## Local Development
+## 📥 Running the Project (GitHub Download)
+1. Clone the repo  
+   git clone https://github.com/<your-username>/<repo-name>.git  
+   cd <repo-name>
 
-To run the app locally:
+2. Create a virtual environment  
+   python3 -m venv venv  
+   source venv/bin/activate (macOS/Linux)  
+   venv\Scripts\activate (Windows)
 
-1. Create a `.env` file with your database settings  
-2. Install dependencies  
-3. Start the Flask server  
-4. Test the database connection via `/db-test`
+3. Install dependencies  
+   pip install -r requirements.txt  
+   (If missing, create a requirements.txt containing: flask, mistralai)
 
-## Deployment
+4. Set your Mistral API key  
+   export MISTRAL_API_KEY="your-key" (macOS/Linux)  
+   set MISTRAL_API_KEY="your-key" (Windows)
 
-Deployment will be handled through **GitHub → Cloud Run continuous deployment**, with Cloud SQL attached for secure database access.
+5. Start the server  
+   python main.py
 
----
+6. Open the UI  
+   http://localhost:5000
 
-More documentation will be added as the project evolves.
+## 🧪 Example Flow
+User: “Show monthly spend for customer 5”  
+Agent: Runs SQL → returns rows → generates Markdown summary → UI renders formatted table + insights.
+
+## 📈 Future Enhancements
+- Inline charts  
+- Multi‑customer comparisons  
+- Export to CSV  
+- Authentication  
+- Additional analytics tools  
+
+## 👤 Author
+Built by Kiernan — aspiring AI Platform Engineer & full‑stack developer.
+Designed for clarity, maintainability, and a smooth demo experience.

@@ -119,9 +119,14 @@ def execute_sql(sql: str):
         rows = query(sql)
 
         # 4. Clean and structure results
-        cleaned_results = clean_results(rows)
+        cleaned = clean_results(rows)
+        print(f"Cleaned results: {cleaned}")
 
-        return cleaned_results
+        return {
+            "sql": sql,
+            "row_count": cleaned["row_count"],
+            "rows": cleaned["rows"]
+        }
 
     except Exception as e:
         logger.error(f"Error executing SQL: {e}")

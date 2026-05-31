@@ -1,4 +1,6 @@
-from flask import Flask
+from flask import Flask, session
+from flask_session import Session
+
 from app.routes.api import bp as api_bp
 from app.routes.home import home_bp as home_bp
 from app.routes.db_test import db_test_bp
@@ -17,13 +19,25 @@ logging.basicConfig(
 
 def create_app():
     app = Flask(__name__)
+
+    # Secret key still required for signing session IDs
     app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret")
 
+    # --- SERVER-SIDE SESSION STORAGE ---
+    app.config["SESSION_TYPE"] = "filesystem"
+    app.config["SESSION_FILE_DIR"] = "./flask_session"
+    app.config["SESSION_PERMANENT"] = False
+    Session(app)
+    # -----------------------------------
+
+    # Register blueprints
     app.register_blueprint(api_bp)
     app.register_blueprint(home_bp)
     app.register_blueprint(db_test_bp)
+
     return app
 
 if __name__ == "__main__":
     app = create_app()
     app.run(debug=True)
+

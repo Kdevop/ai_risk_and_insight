@@ -26,8 +26,12 @@ def get_customer_overview(customer_id: int):
     WHERE c.customer_id = {customer_id}
     GROUP BY c.customer_id;
     """
-    return execute_sql(sql)
-
+    result = execute_sql(sql)
+    return {
+        "sql": result["sql"],
+        "row_count": result["row_count"],
+        "rows": result["rows"]
+    }
 
 # 2. CUSTOMER ACCOUNTS
 def get_customer_accounts(customer_id: int):
@@ -41,8 +45,12 @@ def get_customer_accounts(customer_id: int):
     WHERE customer_id = {customer_id}
     ORDER BY opened_at DESC;
     """
-    return execute_sql(sql)
-
+    result = execute_sql(sql)
+    return {
+        "sql": result["sql"],
+        "row_count": result["row_count"],
+        "rows": result["rows"]
+    }
 
 # 3. TOTAL BALANCE
 def get_total_balance(customer_id: int):
@@ -52,7 +60,12 @@ def get_total_balance(customer_id: int):
     FROM accounts
     WHERE customer_id = {customer_id};
     """
-    return execute_sql(sql)
+    result = execute_sql(sql)
+    return {
+        "sql": result["sql"],
+        "row_count": result["row_count"],
+        "rows": result["rows"]
+    }
 
 
 # 4. TOTAL SPEND
@@ -64,7 +77,12 @@ def get_total_spend(customer_id: int):
     JOIN accounts a ON t.account_id = a.account_id
     WHERE a.customer_id = {customer_id};
     """
-    return execute_sql(sql)
+    result = execute_sql(sql)
+    return {
+        "sql": result["sql"],
+        "row_count": result["row_count"],
+        "rows": result["rows"]
+    }
 
 
 # 5. MONTHLY SPEND
@@ -80,7 +98,12 @@ def get_monthly_spend(customer_id: int):
     ORDER BY month DESC
     LIMIT 12;
     """
-    return execute_sql(sql)
+    result = execute_sql(sql)
+    return {
+        "sql": result["sql"],
+        "row_count": result["row_count"],
+        "rows": result["rows"]
+    }
 
 
 # 6. SPEND BY CATEGORY
@@ -95,7 +118,13 @@ def get_spend_by_category(customer_id: int):
     GROUP BY t.category
     ORDER BY total_spend DESC;
     """
-    return execute_sql(sql)
+    result = execute_sql(sql)
+    print(result)
+    return {
+        "sql": result["sql"],
+        "row_count": result["row_count"],
+        "rows": result["rows"]
+    }
 
 
 # 7. CUSTOMER ALERTS
@@ -111,7 +140,12 @@ def get_customer_alerts(customer_id: int):
     WHERE customer_id = {customer_id}
     ORDER BY created_at DESC;
     """
-    return execute_sql(sql)
+    result = execute_sql(sql)
+    return {
+        "sql": result["sql"],
+        "row_count": result["row_count"],
+        "rows": result["rows"]
+    }
 
 
 # 8. LATEST RISK SCORE
@@ -126,7 +160,12 @@ def get_customer_latest_risk(customer_id: int):
     ORDER BY generated_at DESC
     LIMIT 3;
     """
-    return execute_sql(sql)
+    result = execute_sql(sql)
+    return {
+        "sql": result["sql"],
+        "row_count": result["row_count"],
+        "rows": result["rows"]
+    }
 
 TOOL_REGISTRY = {
     "get_customer_overview": get_customer_overview,

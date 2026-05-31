@@ -77,7 +77,7 @@ def handle_tool_calls(response, messages):
     # No tool calls → normal assistant message
     if not getattr(message, "tool_calls", None):
         messages.append({"role": "assistant", "content": message.content})
-        return message.content, messages
+        return message.content, messages, None
 
     # Convert tool calls to JSON-safe dicts
     safe_tool_calls = []
@@ -108,6 +108,8 @@ def handle_tool_calls(response, messages):
             tool_result = {"error": f"Unknown tool: {tool_name}"}
         else:
             tool_result = tool_fn(**tool_args)
+        
+        last_tool_result = tool_result
 
         # If tool returned an error → return directly
         if isinstance(tool_result, dict) and "error" in tool_result:
@@ -134,7 +136,7 @@ def handle_tool_calls(response, messages):
     final_message = followup.choices[0].message
     messages.append({"role": "assistant", "content": final_message.content})
 
-    return final_message.content, messages
+    return final_message.content, messages, last_tool_result
 
 
 # ---------------------------------------------------------
@@ -172,23 +174,17 @@ def run_agent(user_input: str, history: list | None = None):
     response = call_model(messages)
 
     # 3. Handle tool calls + follow-up model call
-    answer, updated_messages = handle_tool_calls(response, messages)
+    answer, updated_messages, tool_result = handle_tool_calls(response, messages)
 
     # 4. Log for explainability
     log_event(user_input, answer)
 
     # 5. Return structured response with JSON-safe history
     return {
-        "user_question": user_input,
         "agent_response": answer,
-        "history": to_json_safe_messages(updated_messages)
+        "history": to_json_safe_messages(updated_messages),
+        "tool_result": tool_result
     }
 
 
-    # return {
-    #     "user_question": user_input,
-    #     "agent_response": answer.agent_response,
-    #     "executed_sql": answer.executed_sql if hasattr(answer, "executed_sql") else None,
-    #     "history": to_json_safe_messages(updated_messages)
-    # }
 
