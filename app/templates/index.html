@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <meta charset="UTF-8" />
@@ -104,7 +105,8 @@
             border-radius: 6px;
             white-space: pre-wrap;
             font-family: monospace;
-            display: none; /* hidden by default */
+            display: none;
+            /* hidden by default */
             margin-bottom: 20px;
         }
 
@@ -127,7 +129,8 @@
             overflow: hidden;
         }
 
-        th, td {
+        th,
+        td {
             padding: 10px;
             border-bottom: 1px solid #eee;
             text-align: left;
@@ -143,331 +146,404 @@
         }
 
         .theme-toggle {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        background: #444;
-        color: white;
-        padding: 8px 14px;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        z-index: 10;
-    }
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #444;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            z-index: 10;
+        }
 
-    /* DARK MODE */
-    .dark-mode {
-        background: #1e1e1e;
-        color: #e0e0e0;
-    }
+        /* DARK MODE */
+        .dark-mode {
+            background: #1e1e1e;
+            color: #e0e0e0;
+        }
 
-    .dark-mode .chat-panel {
-        background: #252526;
-        border-right: 1px solid #333;
-    }
+        .dark-mode .chat-panel {
+            background: #252526;
+            border-right: 1px solid #333;
+        }
 
-    .dark-mode .assistant .bubble {
-        background: #333;
-        color: #eee;
-    }
+        .dark-mode .assistant .bubble {
+            background: #333;
+            color: #eee;
+        }
 
-    .dark-mode .user .bubble {
-        background: #0078d4;
-    }
+        .dark-mode .user .bubble {
+            background: #0078d4;
+        }
 
-    .dark-mode .data-panel {
-        background: #1e1e1e;
-    }
+        .dark-mode .data-panel {
+            background: #1e1e1e;
+        }
 
-    .dark-mode table {
-        background: #2d2d2d;
-        color: #ddd;
-    }
+        .dark-mode table {
+            background: #2d2d2d;
+            color: #ddd;
+        }
 
-    .dark-mode th {
-        background: #3a3a3a;
-    }
+        .dark-mode th {
+            background: #3a3a3a;
+        }
 
-    .dark-mode tr:hover {
-        background: #333;
-    }
+        .dark-mode tr:hover {
+            background: #333;
+        }
 
-    .dark-mode .sql-block {
-        background: #111;
-    }
+        .dark-mode .sql-block {
+            background: #111;
+        }
 
-    .dark-mode .toggle-sql {
-        background: #0078d4;
-    }
+        .dark-mode .toggle-sql {
+            background: #0078d4;
+        }
 
-    /* INPUT ROW IN DARK MODE */
-    .dark-mode .input-row {
-        background: #2a2a2a;
-        border-top: 1px solid #444;
-    }
+        /* INPUT ROW IN DARK MODE */
+        .dark-mode .input-row {
+            background: #2a2a2a;
+            border-top: 1px solid #444;
+        }
 
-    /* USER INPUT BOX IN DARK MODE */
-    .dark-mode #user-input {
-        background: #1e1e1e;
-        color: #e0e0e0;
-        border: 1px solid #555;
-    }
+        /* USER INPUT BOX IN DARK MODE */
+        .dark-mode #user-input {
+            background: #1e1e1e;
+            color: #e0e0e0;
+            border: 1px solid #555;
+        }
 
-    /* SEND BUTTON IN DARK MODE */
-    .dark-mode button {
-        background: #0078d4;
-        color: white;
-        border: none;
-    }
+        /* SEND BUTTON IN DARK MODE */
+        .dark-mode button {
+            background: #0078d4;
+            color: white;
+            border: none;
+        }
 
-    .dark-mode button:hover {
-        background: #0a84e6;
-    }
+        .dark-mode button:hover {
+            background: #0a84e6;
+        }
 
 
-    .thinking {
-        display: flex;
-        gap: 6px;
-        margin: 10px 0;
-    }
+        .thinking {
+            display: flex;
+            gap: 6px;
+            margin: 10px 0;
+        }
 
-    .dot {
-        width: 10px;
-        height: 10px;
-        background: #aaa;
-        border-radius: 50%;
-        animation: blink 1.4s infinite both;
-    }
+        .dot {
+            width: 10px;
+            height: 10px;
+            background: #aaa;
+            border-radius: 50%;
+            animation: blink 1.4s infinite both;
+        }
 
-    .dot:nth-child(2) { animation-delay: 0.2s; }
-    .dot:nth-child(3) { animation-delay: 0.4s; }
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
 
-    @keyframes blink {
-        0% { opacity: 0.2; }
-        20% { opacity: 1; }
-        100% { opacity: 0.2; }
-    }
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
 
-    .dark-mode .dot {
-        background: #ddd;
-    }
+        @keyframes blink {
+            0% {
+                opacity: 0.2;
+            }
 
-    .bubble table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
+            20% {
+                opacity: 1;
+            }
 
-    .bubble th, .bubble td {
-        border: 1px solid #ddd;
-        padding: 6px;
-    }
+            100% {
+                opacity: 0.2;
+            }
+        }
 
-    .bubble th {
-        background: #f0f0f0;
-        font-weight: 600;
-    }
+        .dark-mode .dot {
+            background: #ddd;
+        }
 
-    .dark-mode .bubble th {
-        background: #333;
-    }
+        .bubble table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
 
+        .bubble th,
+        .bubble td {
+            border: 1px solid #ddd;
+            padding: 6px;
+        }
+
+        .bubble th {
+            background: #f0f0f0;
+            font-weight: 600;
+        }
+
+        .dark-mode .bubble th {
+            background: #333;
+        }
     </style>
 </head>
 
-<body>
-<button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+<body class="dark-mode">
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
 
-<div class="container">
+    <div class="container">
 
-    <!-- LEFT: CHAT -->
-    <div class="chat-panel">
+        <!-- LEFT: CHAT -->
+        <div class="chat-panel">
 
-        <!-- CHAT MESSAGES -->
-        <div id="chat-box"></div>
+            <div class="chat-header">
+                <h2>Banking Assistant</h2>
+                <button id="clear-chat-btn" class="clear-btn">Clear Chat</button>
+            </div>
 
-        <!-- THINKING DOTS  -->
-        <div id="thinking" class="thinking" style="display:none;">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
+            <!-- CHAT MESSAGES -->
+            <div id="chat-box"></div>
+
+            <!-- THINKING DOTS  -->
+            <div id="thinking" class="thinking" style="display:none;">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+
+            <!-- INPUT ROW -->
+            <div class="input-row">
+                <input id="user-input" placeholder="Ask a question…" />
+                <button onclick="sendMessage()">Send</button>
+            </div>
         </div>
 
-        <!-- INPUT ROW -->
-        <div class="input-row">
-            <input id="user-input" placeholder="Ask a question…" />
-            <button onclick="sendMessage()">Send</button>
+        <!-- RIGHT: DATA PANEL -->
+        <div class="data-panel">
+            <div class="panel-header">Query Results</div>
+
+            <div class="toggle-sql" onclick="toggleSQL()">Show SQL</div>
+            <pre id="sql-box" class="sql-block"></pre>
+
+            <div id="results-box"></div>
         </div>
+
     </div>
 
-    <!-- RIGHT: DATA PANEL -->
-    <div class="data-panel">
-        <div class="panel-header">Query Results</div>
+    <script>
 
-        <div class="toggle-sql" onclick="toggleSQL()">Show SQL</div>
-        <pre id="sql-box" class="sql-block"></pre>
+        // Default to dark mode on first load
+        if (!localStorage.getItem("theme")) {
+            localStorage.setItem("theme", "dark");
+        }
 
-        <div id="results-box"></div>
-    </div>
+        // Apply saved theme
+        if (localStorage.getItem("theme") === "dark") {
+            document.body.classList.add("dark-mode");
+        } else {
+            document.body.classList.remove("dark-mode");
+        }
 
-</div>
+        const btn = document.querySelector(".theme-toggle");
+        btn.textContent = document.body.classList.contains("dark-mode")
+            ? "☀️ Light Mode"
+            : "🌙 Dark Mode";
 
-<script>
+        function extractLatestSQL(history) {
+            for (let i = history.length - 1; i >= 0; i--) {
+                const msg = history[i];
+                if (msg.role === "tool") {
+                    try {
+                        const data = JSON.parse(msg.content);
 
-function extractLatestSQL(history) {
-    for (let i = history.length - 1; i >= 0; i--) {
-        const msg = history[i];
-        if (msg.role === "tool") {
-            try {
-                const data = JSON.parse(msg.content);
+                        if (data.columns && data.rows) {
+                            return data;
+                        }
 
-                // New format: detect columns + rows
-                if (data.columns && data.rows) {
-                    return data;
+                    } catch (e) {
+                        console.error("Failed to parse tool content", e);
+                    }
                 }
+            }
+            return null;
+        }
 
-            } catch (e) {
-                console.error("Failed to parse tool content", e);
+        function showThinking() {
+            const t = document.getElementById("thinking");
+            t.style.display = "flex";
+        }
+
+        function hideThinking() {
+            const t = document.getElementById("thinking");
+            t.style.display = "none";
+            void t.offsetHeight;
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle("dark-mode");
+
+            const btn = document.querySelector(".theme-toggle");
+            const isDark = document.body.classList.contains("dark-mode");
+
+            // Update button label
+            btn.textContent = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
+
+            // Save preference
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+        }
+
+
+        function addMessage(role, text) {
+            const box = document.getElementById("chat-box");
+
+            const msg = document.createElement("div");
+            msg.className = `message ${role}`;
+
+            const bubble = document.createElement("div");
+            bubble.className = "bubble";
+            bubble.innerHTML = marked.parse(text);
+
+            msg.appendChild(bubble);
+            box.appendChild(msg);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function toggleSQL() {
+            const sqlBlock = document.getElementById("sql-box");
+            const toggle = document.querySelector(".toggle-sql");
+
+            if (sqlBlock.style.display === "none") {
+                sqlBlock.style.display = "block";
+                toggle.textContent = "Hide SQL";
+            } else {
+                sqlBlock.style.display = "none";
+                toggle.textContent = "Show SQL";
             }
         }
-    }
-    return null;
-}
 
-function showThinking() {
-    const t = document.getElementById("thinking");
-    t.style.display = "flex";
-}
+        function renderResultsTable(data) {
+            const box = document.getElementById("results-box");
+            box.innerHTML = "";
 
-function hideThinking() {
-    const t = document.getElementById("thinking");
-    t.style.display = "none";
-    void t.offsetHeight; 
-}
+            if (!data || !data.rows || data.rows.length === 0) {
+                box.textContent = "No results.";
+                return;
+            }
 
-function toggleTheme() {
-    document.body.classList.toggle("dark-mode");
+            const table = document.createElement("table");
 
-    const btn = document.querySelector(".theme-toggle");
-    if (document.body.classList.contains("dark-mode")) {
-        btn.textContent = "☀️ Light Mode";
-    } else {
-        btn.textContent = "🌙 Dark Mode";
-    }
-}
+            // Header
+            const thead = document.createElement("thead");
+            const headerRow = document.createElement("tr");
 
-function addMessage(role, text) {
-    const box = document.getElementById("chat-box");
+            data.columns.forEach(col => {
+                const th = document.createElement("th");
+                th.textContent = col;
+                headerRow.appendChild(th);
+            });
 
-    const msg = document.createElement("div");
-    msg.className = `message ${role}`;
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
 
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
-    bubble.innerHTML = marked.parse(text);
+            // Body
+            const tbody = document.createElement("tbody");
 
-    msg.appendChild(bubble);
-    box.appendChild(msg);
-    box.scrollTop = box.scrollHeight;
-}
+            data.rows.forEach(row => {
+                const tr = document.createElement("tr");
+                row.forEach(val => {
+                    const td = document.createElement("td");
+                    td.textContent = val;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
 
-function toggleSQL() {
-    const sqlBlock = document.getElementById("sql-box");
-    const toggle = document.querySelector(".toggle-sql");
+            table.appendChild(tbody);
 
-    if (sqlBlock.style.display === "none") {
-        sqlBlock.style.display = "block";
-        toggle.textContent = "Hide SQL";
-    } else {
-        sqlBlock.style.display = "none";
-        toggle.textContent = "Show SQL";
-    }
-}
-
-function renderResultsTable(data) {
-    const box = document.getElementById("results-box");
-    box.innerHTML = "";
-
-    if (!data || !data.rows || data.rows.length === 0) {
-        box.textContent = "No results.";
-        return;
-    }
-
-    const table = document.createElement("table");
-
-    // Header
-    const thead = document.createElement("thead");
-    const headerRow = document.createElement("tr");
-
-    data.columns.forEach(col => {
-        const th = document.createElement("th");
-        th.textContent = col;
-        headerRow.appendChild(th);
-    });
-
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-
-    // Body
-    const tbody = document.createElement("tbody");
-
-    data.rows.forEach(row => {
-        const tr = document.createElement("tr");
-        row.forEach(val => {
-            const td = document.createElement("td");
-            td.textContent = val;
-            tr.appendChild(td);
-        });
-        tbody.appendChild(tr);
-    });
-
-    table.appendChild(tbody);
-
-    box.appendChild(table);
-}
-
-
-function sendMessage() {
-    const input = document.getElementById("user-input");
-    const text = input.value.trim();
-    if (!text) return;
-
-    addMessage("user", text);
-    input.value = "";
-
-    showThinking();
-
-    fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text })
-    })
-    .then(res => res.json())
-    .then(data => {
-        hideThinking();
-        addMessage("assistant", data.agent_response);
-
-        const sqlData = extractLatestSQL(data.history);
-
-        if (sqlData) {
-            // Update SQL panel (optional)
-            document.getElementById("sql-box").textContent =
-                sqlData.sql || "(SQL not shown for this tool)";
-
-            // Render table
-            renderResultsTable(sqlData);
-        } else {
-            document.getElementById("sql-box").textContent = "No SQL executed.";
-            renderResultsTable(null);
+            box.appendChild(table);
         }
-    })
-    .catch(err => {
-        hideThinking();
-        addMessage("assistant", "Something went wrong.");
-    });
 
-}
-</script>
+        function stripMarkdownFences(text) {
+            return text
+                .replace(/^```json\s*/i, "")
+                .replace(/^```\s*/i, "")
+                .replace(/```$/i, "")
+                .trim();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById("user-input");
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage("user", text);
+            input.value = "";
+
+            showThinking();
+
+            fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: text })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    hideThinking();
+                    const raw = data.agent_response; 
+                    const cleaned = stripMarkdownFences(raw);
+                    const finalJson = JSON.parse(cleaned);
+                    console.log("Summary:", finalJson.summary);
+                    addMessage("assistant", finalJson.summary);
+                    console.log("Full agent response data:", data);
+                    const sqlData = extractLatestSQL(data.history);
+
+                    if (sqlData) {
+                        // Update SQL panel (optional)
+                        document.getElementById("sql-box").textContent =
+                            sqlData.sql || "(SQL not shown for this tool)";
+
+                        // Render table
+                        renderResultsTable(sqlData);
+                    } else {
+                        document.getElementById("sql-box").textContent = "No SQL executed.";
+                        renderResultsTable(null);
+                    }
+                })
+                .catch(err => {
+                    hideThinking();
+                    addMessage("assistant", "Something went wrong.");
+                });
+
+        }
+
+        document.getElementById("clear-chat-btn").addEventListener("click", async () => {
+            const confirmed = confirm("Clear the entire chat history?");
+            if (!confirmed) return;
+
+            await fetch("/clear_chat", { method: "POST" });
+
+            // Clear UI immediately
+            document.getElementById("chat-box").innerHTML = "";
+            document.getElementById("user-input").value = "";
+
+            const sqlBox = document.getElementById("sql-box");
+            if (sqlBox) sqlBox.innerHTML = "";
+
+            const resultsBox = document.getElementById("results-box");
+            if (resultsBox) resultsBox.innerHTML = "";
+
+            // Allow DOM updates to flush, then reload
+            setTimeout(() => {
+                window.location.reload();
+            }, 50);
+        });
+
+
+    </script>
 
 </body>
+
 </html>

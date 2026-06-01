@@ -5,6 +5,7 @@ from datetime import timedelta
 from app.routes.api import bp as api_bp
 from app.routes.home import home_bp as home_bp
 from app.routes.db_test import db_test_bp
+from app.routes.clear_chat import clear_chat_bp
 
 import logging
 import os
@@ -36,7 +37,7 @@ def create_app():
     app.register_blueprint(api_bp)
     app.register_blueprint(home_bp)
     app.register_blueprint(db_test_bp)
-
+    app.register_blueprint(clear_chat_bp)
     return app
 
 if __name__ == "__main__":

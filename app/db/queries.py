@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 # -----------------------------
 
 def validate_sql(sql: str):
-    print(f"Validating SQL: {sql}")
     forbidden = ["drop", "delete", "insert", "update", "alter", "truncate", "--"]
 
     lowered = sql.lower()
@@ -33,7 +32,6 @@ def validate_sql(sql: str):
 # LIMIT ENFORCEMENT
 # -----------------------------
 def enforce_limit(sql: str, limit: int = 20):
-    print(f"Enforcing LIMIT on SQL: {sql}")
     lowered = sql.lower()
 
     # If LIMIT already exists, do nothing
@@ -44,7 +42,6 @@ def enforce_limit(sql: str, limit: int = 20):
     clean = sql.strip().rstrip(";")
 
     response = clean + f" LIMIT {limit};"
-    print(f"SQL after enforcing LIMIT: {response}")
 
     # Append LIMIT safely
     return response
@@ -64,7 +61,6 @@ def normalise_value(v):
 # SQL EXECUTION
 # -----------------------------
 def execute_sql(sql: str):
-    print(f"Received SQL for execution: {sql}")
     """
     Execute the SQL query and return results as a list of dicts.
     """

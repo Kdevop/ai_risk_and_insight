@@ -205,3 +205,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Logging
+.jsonl
+flask_session/7f28601aadb64d27dcd467f57dd9e4d5
+flask_session/2029240f6d1128be89ddc32729463129
+app/logs/application_logs.jsonl
+flask_session/caa9c0588e493d417942ef439b2c84c6

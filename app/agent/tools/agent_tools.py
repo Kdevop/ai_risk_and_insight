@@ -15,7 +15,6 @@ def get_all_customers():
   
     return execute_sql(sql)
 
-
 # 1. CUSTOMER OVERVIEW
 def get_customer_overview(customer_id: int):
     sql = f"""
@@ -102,7 +101,6 @@ def get_spend_by_category(customer_id: int):
     """
     return execute_sql(sql)
 
-
 # 7. CUSTOMER ALERTS
 def get_customer_alerts(customer_id: int):
     sql = f"""
@@ -117,7 +115,6 @@ def get_customer_alerts(customer_id: int):
     ORDER BY created_at DESC;
     """
     return execute_sql(sql)
-
 
 # 8. LATEST RISK SCORE
 def get_customer_latest_risk(customer_id: int):
