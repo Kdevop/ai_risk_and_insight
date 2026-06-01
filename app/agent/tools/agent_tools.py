@@ -137,12 +137,5 @@ def run_sql_query(query: str):
 TOOL_REGISTRY = {
     "get_all_customers": get_all_customers,
     "get_customer_overview": get_customer_overview,
-    "get_customer_accounts": get_customer_accounts,
-    "get_total_balance": get_total_balance,
-    "get_total_spend": get_total_spend,
-    "get_monthly_spend": get_monthly_spend,
-    "get_spend_by_category": get_spend_by_category,
-    "get_customer_alerts": get_customer_alerts,
-    "get_customer_latest_risk": get_customer_latest_risk,
     "run_sql_query": run_sql_query
 }

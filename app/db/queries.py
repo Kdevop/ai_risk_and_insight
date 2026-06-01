@@ -3,6 +3,7 @@ import logging
 import re
 from decimal import Decimal
 from datetime import datetime, date
+from app.services.analytics import register_sql_result
 
 logger = logging.getLogger(__name__)
 
@@ -83,13 +84,27 @@ def execute_sql(sql: str):
         columns = [desc[0] for desc in cursor.description]
         list_rows = [[normalise_value(v) for v in row] for row in rows]
 
+        df_meta = register_sql_result(list_rows, columns)
+
+        # return {
+        #     "sql": sql,
+        #     "columns": columns,
+        #     "rows": list_rows,
+        #     "row_count": len(list_rows)
+        # }
+        
         return {
+            "status": "success",
             "sql": sql,
-            "columns": columns,
-            "rows": list_rows,
-            "row_count": len(list_rows)
+            **df_meta
         }
 
+    # except Exception as e:
+    #     logger.error(f"Error executing SQL: {e}")
+    #     return {"error": str(e)}
     except Exception as e:
-        logger.error(f"Error executing SQL: {e}")
-        return {"error": str(e)}
+        return {
+            "status": "error",
+            "sql": sql,
+            "message": str(e)
+        }

@@ -19,6 +19,7 @@ lime
 shap
 
 plotly
+seaborn
 
 # --- Added for FastAPI backend ---
 fastapi
