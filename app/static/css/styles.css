@@ -1,0 +1,396 @@
+/* ================================
+GLOBAL
+================================ */
+body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    background: #f5f6fa;
+    color: #333;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* ================================
+LEFT: CHAT PANEL
+================================ */
+.chat-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #ddd;
+    background: white;
+}
+
+#chat-box {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.message {
+    margin-bottom: 16px;
+    max-width: 80%;
+    line-height: 1.4;
+}
+
+.user {
+    text-align: right;
+}
+
+.user .bubble {
+    background: #0078d4;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.assistant .bubble {
+    background: #e9ecef;
+    padding: 10px 14px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.input-row {
+    display: flex;
+    padding: 12px;
+    border-top: 1px solid #ddd;
+    background: #fafafa;
+}
+
+#user-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+button {
+    margin-left: 10px;
+    padding: 10px 16px;
+    background: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* ================================
+RIGHT: RESULTS PANEL
+================================ */
+.results-container {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto;
+    background: #fafafa;
+}
+
+.data-panel {
+    width: 100%;
+    flex: 1;
+}
+
+.panel-header {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* Unified toggle buttons */
+.toggle-btn {
+    margin-top: 8px;
+    padding: 6px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    background: #0078d4;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 6px;
+}
+
+/* SQL block */
+.sql-block {
+    background: #272822;
+    color: #f8f8f2;
+    padding: 12px;
+    border-radius: 6px;
+    white-space: pre-wrap;
+    font-family: monospace;
+    margin-bottom: 20px;
+}
+
+/* Data preview */
+.data-preview {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.data-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+th {
+    background: #f0f0f0;
+    font-weight: 600;
+}
+
+tr:hover {
+    background: #f9f9f9;
+}
+
+/* ================================
+CHART PANEL
+================================ */
+.chart-panel {
+    margin-top: 20px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.chart-image {
+    max-width: 100%;
+    border-radius: 6px;
+}
+
+.chart-loading {
+    font-size: 14px;
+    color: #555;
+}
+
+/* ================================
+UTILITY
+================================ */
+.hidden {
+    display: none !important;
+}
+
+/* ================================
+DARK MODE
+================================ */
+.dark-mode {
+    background: #1e1e1e;
+    color: #e0e0e0;
+}
+
+.dark-mode .chat-panel {
+    background: #252526;
+    border-right: 1px solid #333;
+}
+
+.dark-mode .assistant .bubble {
+    background: #333;
+    color: #eee;
+}
+
+.dark-mode .user .bubble {
+    background: #0078d4;
+}
+
+.dark-mode .data-panel {
+    background: #1e1e1e;
+}
+
+.dark-mode table {
+    background: #2d2d2d;
+    color: #ddd;
+}
+
+.dark-mode th {
+    background: #3a3a3a;
+}
+
+.dark-mode tr:hover {
+    background: #333;
+}
+
+.dark-mode .sql-block {
+    background: #111;
+}
+
+.dark-mode .toggle-btn {
+    background: #0078d4;
+    border-color: #005fa3;
+}
+
+.dark-mode .results-container {
+    background: #1e1e1e;
+}
+
+.dark-mode .chart-panel {
+    background: #252526;
+    border: 1px solid #333;
+}
+
+.dark-mode .chart-loading {
+    color: #ccc;
+}
+
+.dark-mode .chart-image {
+    filter: brightness(0.9);
+}
+
+/* Restore dark mode for the chat input row */
+.dark-mode .input-row {
+    background: #2a2a2a !important;
+    border-top: 1px solid #444 !important;
+}
+
+/* Restore dark mode for the input box */
+.dark-mode #user-input {
+    background: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border: 1px solid #555 !important;
+}
+
+/* Restore dark mode for the send button */
+.dark-mode .input-row button {
+    background: #0078d4 !important;
+    color: white !important;
+}
+
+
+/* ================================
+THINKING DOTS
+================================ */
+.thinking {
+    display: flex;
+    gap: 6px;
+    margin: 10px 0;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background: #aaa;
+    border-radius: 50%;
+    animation: blink 1.4s infinite both;
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes blink {
+    0% { opacity: 0.2; }
+    20% { opacity: 1; }
+    100% { opacity: 0.2; }
+}
+
+.dark-mode .dot {
+    background: #ddd;
+}
+
+/* Bubble table inside chat messages */
+.bubble table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.bubble th,
+.bubble td {
+    border: 1px solid #ddd;
+    padding: 6px;
+}
+
+.bubble th {
+    background: #f0f0f0;
+    font-weight: 600;
+}
+
+.dark-mode .bubble th {
+    background: #333;
+}
+
+.theme-toggle {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    background: #0078d4;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+/* ANALYSIS DETAILS PANEL */
+.analysis-details {
+    margin-top: 15px;
+    padding: 12px;
+    background: white;
+    border-radius: 6px;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+}
+
+/* Table inside analysis panel */
+.analysis-details table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.analysis-details th,
+.analysis-details td {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.analysis-details th {
+    background: #f0f0f0;
+    font-weight: 600;
+}
+
+/* Dark mode support */
+.dark-mode .analysis-details {
+    background: #252526;
+    border: 1px solid #333;
+}
+
+.dark-mode .analysis-details th {
+    background: #333;
+}
+
+.dark-mode .analysis-details td {
+    color: #ddd;
+}

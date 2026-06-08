@@ -208,7 +208,12 @@ __marimo__/
 
 # Logging
 .jsonl
+
 flask_session/7f28601aadb64d27dcd467f57dd9e4d5
 flask_session/2029240f6d1128be89ddc32729463129
 app/logs/application_logs.jsonl
 flask_session/caa9c0588e493d417942ef439b2c84c6
+app/static/charts/category_breakdown_20260603_185007_933048.png
+app/static/charts/monthly_trend_20260603_174129_121339.png
+.png
+flask_session/

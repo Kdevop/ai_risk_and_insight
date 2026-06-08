@@ -30,24 +30,6 @@ def validate_sql(sql: str):
     return None
 
 # -----------------------------
-# LIMIT ENFORCEMENT
-# -----------------------------
-def enforce_limit(sql: str, limit: int = 20):
-    lowered = sql.lower()
-
-    # If LIMIT already exists, do nothing
-    if "limit" in lowered:
-        return sql
-
-    # Strip whitespace and trailing semicolon
-    clean = sql.strip().rstrip(";")
-
-    response = clean + f" LIMIT {limit};"
-
-    # Append LIMIT safely
-    return response
-
-# -----------------------------
 # RESULT CLEANING
 # -----------------------------
 def normalise_value(v):
@@ -73,35 +55,23 @@ def execute_sql(sql: str):
         logger.warning(f"SQL validation failed: {forbidden_sql}")
         return {"error": forbidden_sql}
 
-    # 2. Enforce LIMIT to avoid huge datasets (TOKEN CONTROL)
-    sql = enforce_limit(sql)
-
     logger.info(f"Executing SQL: {sql}")
 
     try:
-        # 3. Execute the query
+        # 2. Execute the query
         rows, cursor = query(sql)
         columns = [desc[0] for desc in cursor.description]
         list_rows = [[normalise_value(v) for v in row] for row in rows]
 
         df_meta = register_sql_result(list_rows, columns)
 
-        # return {
-        #     "sql": sql,
-        #     "columns": columns,
-        #     "rows": list_rows,
-        #     "row_count": len(list_rows)
-        # }
-        
+       
         return {
             "status": "success",
             "sql": sql,
             **df_meta
         }
 
-    # except Exception as e:
-    #     logger.error(f"Error executing SQL: {e}")
-    #     return {"error": str(e)}
     except Exception as e:
         return {
             "status": "error",

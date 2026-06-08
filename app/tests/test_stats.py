@@ -12,10 +12,16 @@ df_name = sql_result["df_name"]
 df = get_dataframe(df_name)
 print(df.head())
 
-# 3. Run stats
+# 3. Run anomaly detection
 stats = generate_statistical_analysis(
     df_name,
-    "summary_stats",
-    {"columns": ["amount"]}
+    "anomaly_detection",
+    {
+        "column": "amount",      # numeric column to scan
+        "z_threshold": 3.0       # optional, defaults to 3.0
+    }
 )
+
 print(stats)
+
+

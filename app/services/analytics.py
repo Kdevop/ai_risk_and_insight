@@ -1,73 +1,56 @@
 import pandas as pd
 from uuid import uuid4
-import matplotlib.pyplot as plt
-import seaborn as sns
 import os
 from datetime import datetime
 import numpy as np
 
-CHART_DIR = "static/charts"
+# Headless plotting
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+CHART_DIR = "app\static\charts"
 os.makedirs(CHART_DIR, exist_ok=True)
 
 # ---------------------------------------------------------
 # GLOBAL DATAFRAME REGISTRY
 # ---------------------------------------------------------
-
-# Stores DataFrames for the current session.
-# Keys: df_name (string)
-# Values: Pandas DataFrame
 dataframes = {}
-
 
 def save_dataframe(name: str, df: pd.DataFrame):
     """Save a DataFrame into the session registry."""
     dataframes[name] = df
 
-
 def get_dataframe(name: str) -> pd.DataFrame | None:
     """Retrieve a DataFrame from the registry."""
     return dataframes.get(name)
 
-
 # ---------------------------------------------------------
 # SQL RESULT REGISTRATION
 # ---------------------------------------------------------
-
 def register_sql_result(rows, columns):
     """
     Convert SQL rows + columns into a DataFrame,
     store it in the registry, and return lightweight metadata.
     """
-    # Build DataFrame
     df = pd.DataFrame(rows, columns=columns)
-
-    # Generate a unique name for this DataFrame
     df_name = f"df_{uuid4().hex[:8]}"
-
-    # Save to registry
     save_dataframe(df_name, df)
 
-    # Prepare a preview (first 5 rows)
-    preview = df.head(5).to_dict(orient="records")
+    preview = df.head(5).astype(str).values.tolist()
 
-    # Return metadata to the agent
     return {
         "df_name": df_name,
-        "columns": columns,
+        "columns": list(df.columns),
         "row_count": len(df),
         "preview": preview
     }
 
-
 # ---------------------------------------------------------
-# PREVIEW TOOL (OPTIONAL BUT VERY USEFUL)
+# PREVIEW TOOL (OPTIONAL DIAGNOSTIC)
 # ---------------------------------------------------------
-
 def preview_dataframe(df_name: str):
-    """
-    Return column names, dtypes, and a preview of the DataFrame.
-    Useful for the agent to understand the structure before analysis.
-    """
     df = get_dataframe(df_name)
     if df is None:
         return {
@@ -80,255 +63,347 @@ def preview_dataframe(df_name: str):
         "df_name": df_name,
         "columns": list(df.columns),
         "dtypes": df.dtypes.astype(str).to_dict(),
-        "preview": df.head(5).to_dict(orient="records")
+        "preview": df.head(5).astype(str).values.tolist()
     }
 
 # ---------------------------------------------------------
 # STATISTICAL ANALYSIS TOOL
 # ---------------------------------------------------------
+def _base_metadata(df_name: str, df: pd.DataFrame):
+    """Shared metadata block for all tools."""
+    return {
+        "df_name": df_name,
+        "columns": list(df.columns),
+        "row_count": len(df),
+        "preview": df.head(5).astype(str).values.tolist()
+    }
 
-def generate_statistical_analysis(df_name: str, analysis_type: str, params: dict):
-    """
-    Perform non-visual statistical analysis on a stored DataFrame.
-    Supported analysis types:
-      - summary_stats
-      - correlation
-      - anomaly_detection
-    """
-
+def generate_statistical_analysis(
+    df_name: str,
+    analysis_type: str,
+    columns: list = None,
+    x: str = None,
+    y: str = None,
+    column: str = None,
+    z_threshold: float = 3.0
+):
     df = get_dataframe(df_name)
     if df is None:
         return {
             "status": "error",
-            "message": f"DataFrame '{df_name}' not found."
+            "analysis_type": "none",
+            "df_name": df_name,
+            "analysis_result": {},
+            "summary": f"DataFrame '{df_name}' not found."
         }
 
     try:
-        # -------------------------------------------------
-        # 1. SUMMARY STATISTICS
-        # -------------------------------------------------
+        # 1. SUMMARY STATS
         if analysis_type == "summary_stats":
-            cols = params.get("columns", df.select_dtypes(include="number").columns.tolist())
-            stats = df[cols].describe().to_dict()
-            return {
+            if not columns:
+                # default to numeric columns
+                columns = df.select_dtypes(include="number").columns.tolist()
+
+            if not columns:
+                return {
+                    "status": "error",
+                    "analysis_type": "summary_stats",
+                    "df_name": df_name,
+                    "analysis_result": {},
+                    "summary": "No numeric columns available to summarize."
+                }
+
+            stats = df[columns].describe().to_dict()
+
+            response = {
                 "status": "success",
                 "analysis_type": "summary_stats",
-                "df_name": df_name,
-                "metrics": stats,
-                "summary": f"Summary statistics computed for {cols}."
+                "analysis_result": {
+                    "metrics": stats,
+                    "anomalies": [],
+                    "anomaly_count": 0,
+                    "image_path": "",
+                    "correlation": None,
+                    "regression_coefficients": []
+                },
+                "summary": f"Summary statistics computed for columns: {columns}."
             }
+            response.update(_base_metadata(df_name, df))
+            return response
 
-        # -------------------------------------------------
         # 2. CORRELATION
-        # -------------------------------------------------
-        if analysis_type == "correlation":
-            x = params["x"]
-            y = params["y"]
+        elif analysis_type == "correlation":
+            if not x or not y:
+                return {
+                    "status": "error",
+                    "analysis_type": "correlation",
+                    "df_name": df_name,
+                    "analysis_result": {},
+                    "summary": "Parameters 'x' and 'y' are mandatory for correlation."
+                }
 
-            corr = df[[x, y]].corr().iloc[0, 1]
+            try:
+                corr_series = df[[x, y]].corr().iloc[0, 1]
+                corr = float(corr_series) if not pd.isna(corr_series) else None
+            except Exception:
+                corr = None
 
-            return {
+            if corr is None:
+                summary = f"Correlation between '{x}' and '{y}' could not be computed."
+            else:
+                summary = f"Correlation between '{x}' and '{y}' is {corr:.4f}."
+
+            response = {
                 "status": "success",
                 "analysis_type": "correlation",
-                "df_name": df_name,
-                "metrics": {
-                    "correlation": corr
+                "analysis_result": {
+                    "metrics": {"correlation": corr},
+                    "anomalies": [],
+                    "anomaly_count": 0,
+                    "image_path": "",
+                    "correlation": corr,
+                    "regression_coefficients": []
                 },
-                "summary": f"Correlation between '{x}' and '{y}' is {corr:.4f}."
+                "summary": summary
             }
+            response.update(_base_metadata(df_name, df))
+            return response
 
-        # -------------------------------------------------
-        # 3. ANOMALY DETECTION (Z-SCORE)
-        # -------------------------------------------------
-        if analysis_type == "anomaly_detection":
-            col = params["column"]
-            threshold = params.get("z_threshold", 3.0)
+        # 3. ANOMALY DETECTION
+        elif analysis_type == "anomaly_detection":
+            if not column:
+                return {
+                    "status": "error",
+                    "analysis_type": "anomaly_detection",
+                    "df_name": df_name,
+                    "analysis_result": {},
+                    "summary": "Parameter 'column' is mandatory for anomaly detection."
+                }
 
-            series = df[col]
-            mean = series.mean()
-            std = series.std()
+            working_df = df.copy()
+            series = pd.to_numeric(working_df[column], errors='coerce')
+            mean, std = series.mean(), series.std()
 
-            df["z_score"] = (series - mean) / std
-            anomalies = df[abs(df["z_score"]) > threshold]
+            if std == 0 or pd.isna(std):
+                anomalies_preview = []
+                anomaly_count = 0
+                summary = "Standard deviation is zero or undefined; no anomalies identified."
+            else:
+                working_df["z_score"] = (series - mean) / std
+                anomalies = working_df[abs(working_df["z_score"]) > z_threshold]
+                anomalies_sorted = anomalies.reindex(
+                    anomalies["z_score"].abs().sort_values(ascending=False).index
+                )
+                anomalies_preview = anomalies_sorted.head(20).astype(str).to_dict(orient="records")
+                anomaly_count = int(len(anomalies))
+                summary = f"Detected {anomaly_count} anomalies in '{column}' using z-score threshold {z_threshold}."
 
-            return {
+            response = {
                 "status": "success",
                 "analysis_type": "anomaly_detection",
-                "df_name": df_name,
-                "anomaly_count": len(anomalies),
-                "anomalies": anomalies.head(20).to_dict(orient="records"),
-                "summary": f"Detected {len(anomalies)} anomalies in '{col}'."
+                "analysis_result": {
+                    "metrics": {},
+                    "anomalies": anomalies_preview,
+                    "anomaly_count": anomaly_count,
+                    "image_path": "",
+                    "correlation": None,
+                    "regression_coefficients": []
+                },
+                "summary": summary
             }
+            response.update(_base_metadata(df_name, df))
+            return response
 
-        # -------------------------------------------------
-        # UNKNOWN ANALYSIS TYPE
-        # -------------------------------------------------
-        return {
-            "status": "error",
-            "message": f"Unknown analysis_type '{analysis_type}'."
-        }
+        else:
+            return {
+                "status": "error",
+                "analysis_type": "none",
+                "df_name": df_name,
+                "analysis_result": {},
+                "summary": f"Unknown analysis_type '{analysis_type}'."
+            }
 
     except Exception as e:
         return {
             "status": "error",
-            "message": str(e)
+            "analysis_type": analysis_type,
+            "df_name": df_name,
+            "analysis_result": {},
+            "summary": f"Statistical tool error: {str(e)}"
         }
-
 
 # ---------------------------------------------------------
 # VISUAL ANALYSIS TOOL
 # ---------------------------------------------------------
-
-def _generate_chart_filename(prefix="chart"):
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-    return f"{prefix}_{timestamp}.png"
-
-
-def generate_visual_analysis(df_name: str, analysis_type: str, params: dict):
-    """
-    Generate visual charts from a stored DataFrame.
-    Supported analysis types:
-      - monthly_trend
-      - category_breakdown
-      - scatter
-      - regression
-    """
-
+def generate_visual_analysis(
+    df_name: str,
+    analysis_type: str,
+    date_column: str = None,
+    value_column: str = None,
+    category_column: str = None,
+    x: str = None,
+    y: str = None,
+    degree: int = 1
+):
     df = get_dataframe(df_name)
     if df is None:
         return {
             "status": "error",
-            "message": f"DataFrame '{df_name}' not found."
+            "analysis_type": "none",
+            "df_name": df_name,
+            "analysis_result": {},
+            "summary": f"DataFrame '{df_name}' not found."
         }
 
     try:
-        # -------------------------------------------------
-        # 1. MONTHLY TREND (line chart)
-        # -------------------------------------------------
-        if analysis_type == "monthly_trend":
-            date_col = params["date_column"]
-            value_col = params["value_column"]
+        fig, ax = plt.subplots(figsize=(10, 5))
+        analysis_result = {}
 
-            df[date_col] = pd.to_datetime(df[date_col])
-            monthly = df.groupby(df[date_col].dt.to_period("M"))[value_col].sum()
+        # 1. MONTHLY TREND
+        if analysis_type == "monthly_trend":
+            if not date_column or not value_column:
+                plt.close(fig)
+                return {
+                    "status": "error",
+                    "analysis_type": "monthly_trend",
+                    "df_name": df_name,
+                    "analysis_result": {},
+                    "summary": "Missing 'date_column' or 'value_column' for monthly_trend."
+                }
+
+            working_df = df.copy()
+            working_df[date_column] = pd.to_datetime(working_df[date_column])
+            working_df[value_column] = pd.to_numeric(working_df[value_column], errors='coerce')
+
+            monthly = working_df.groupby(working_df[date_column].dt.to_period("M"))[value_column].sum()
             monthly.index = monthly.index.to_timestamp()
 
-            plt.figure(figsize=(10, 5))
-            sns.lineplot(x=monthly.index, y=monthly.values)
-            plt.title(f"Monthly Trend of {value_col}")
-            plt.xlabel("Month")
-            plt.ylabel(value_col)
+            sns.lineplot(x=monthly.index, y=monthly.values, ax=ax, marker='o')
+            ax.set_title(f"Monthly Trend of {value_column}")
+            ax.set_xlabel("Month")
+            ax.set_ylabel(value_column)
 
-            filename = _generate_chart_filename("monthly_trend")
-            filepath = os.path.join(CHART_DIR, filename)
-            plt.savefig(filepath, bbox_inches="tight")
-            plt.close()
+            summary = f"Monthly trend chart generated for '{value_column}' over time."
 
-            return {
-                "status": "success",
-                "analysis_type": "monthly_trend",
-                "df_name": df_name,
-                "image_path": filepath,
-                "summary": f"Monthly trend chart generated for '{value_col}'."
-            }
+        # 2. CATEGORY BREAKDOWN
+        elif analysis_type == "category_breakdown":
+            if not category_column or not value_column:
+                plt.close(fig)
+                return {
+                    "status": "error",
+                    "analysis_type": "category_breakdown",
+                    "df_name": df_name,
+                    "analysis_result": {},
+                    "summary": "Missing 'category_column' or 'value_column' for category_breakdown."
+                }
 
-        # -------------------------------------------------
-        # 2. CATEGORY BREAKDOWN (bar chart)
-        # -------------------------------------------------
-        if analysis_type == "category_breakdown":
-            cat_col = params["category_column"]
-            val_col = params["value_column"]
+            working_df = df.copy()
+            working_df[value_column] = pd.to_numeric(working_df[value_column], errors='coerce')
+            grouped = working_df.groupby(category_column)[value_column].sum().sort_values(ascending=False)
 
-            grouped = df.groupby(cat_col)[val_col].sum().sort_values()
+            sns.barplot(x=grouped.index, y=grouped.values, ax=ax)
+            ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+            ax.set_title(f"Category Breakdown of {value_column}")
+            ax.set_xlabel(category_column)
+            ax.set_ylabel(value_column)
 
-            plt.figure(figsize=(10, 5))
-            sns.barplot(x=grouped.index, y=grouped.values)
-            plt.xticks(rotation=45)
-            plt.title(f"Category Breakdown of {val_col}")
-            plt.xlabel(cat_col)
-            plt.ylabel(val_col)
+            summary = f"Category breakdown chart generated for '{value_column}' by '{category_column}'."
 
-            filename = _generate_chart_filename("category_breakdown")
-            filepath = os.path.join(CHART_DIR, filename)
-            plt.savefig(filepath, bbox_inches="tight")
-            plt.close()
+        # 3. SCATTER
+        elif analysis_type == "scatter":
+            if not x or not y:
+                plt.close(fig)
+                return {
+                    "status": "error",
+                    "analysis_type": "scatter",
+                    "df_name": df_name,
+                    "analysis_result": {},
+                    "summary": "Missing column targets 'x' or 'y' for scatter plot."
+                }
 
-            return {
-                "status": "success",
-                "analysis_type": "category_breakdown",
-                "df_name": df_name,
-                "image_path": filepath,
-                "summary": f"Category breakdown chart generated for '{val_col}'."
-            }
+            sns.scatterplot(data=df, x=x, y=y, ax=ax)
+            ax.set_title(f"Scatter Plot: {x} vs {y}")
+            ax.set_xlabel(x)
+            ax.set_ylabel(y)
 
-        # -------------------------------------------------
-        # 3. SCATTER PLOT
-        # -------------------------------------------------
-        if analysis_type == "scatter":
-            x = params["x"]
-            y = params["y"]
+            summary = f"Scatter plot generated for '{x}' vs '{y}'."
 
-            plt.figure(figsize=(8, 5))
-            sns.scatterplot(data=df, x=x, y=y)
-            plt.title(f"Scatter Plot: {x} vs {y}")
+        # 4. REGRESSION
+        elif analysis_type == "regression":
+            if not x or not y:
+                plt.close(fig)
+                return {
+                    "status": "error",
+                    "analysis_type": "regression",
+                    "df_name": df_name,
+                    "analysis_result": {},
+                    "summary": "Missing column targets 'x' or 'y' for regression plot."
+                }
 
-            filename = _generate_chart_filename("scatter")
-            filepath = os.path.join(CHART_DIR, filename)
-            plt.savefig(filepath, bbox_inches="tight")
-            plt.close()
+            x_vals = pd.to_numeric(df[x], errors='coerce').dropna()
+            y_vals = pd.to_numeric(df[y], errors='coerce').dropna()
+            common_idx = x_vals.index.intersection(y_vals.index)
+            x_vals, y_vals = x_vals.loc[common_idx], y_vals.loc[common_idx]
 
-            return {
-                "status": "success",
-                "analysis_type": "scatter",
-                "df_name": df_name,
-                "image_path": filepath,
-                "summary": f"Scatter plot generated for '{x}' vs '{y}'."
-            }
+            if len(x_vals) < degree + 1:
+                plt.close(fig)
+                return {
+                    "status": "error",
+                    "analysis_type": "regression",
+                    "df_name": df_name,
+                    "analysis_result": {},
+                    "summary": f"Not enough data points ({len(x_vals)}) to fit a degree-{degree} regression."
+                }
 
-        # -------------------------------------------------
-        # 4. REGRESSION PLOT (linear or polynomial)
-        # -------------------------------------------------
-        if analysis_type == "regression":
-            x = params["x"]
-            y = params["y"]
-            degree = params.get("degree", 1)
+            sns.scatterplot(x=x_vals, y=y_vals, ax=ax)
 
-            plt.figure(figsize=(8, 5))
-            sns.scatterplot(data=df, x=x, y=y)
-
-            # Fit polynomial regression
-            coeffs = np.polyfit(df[x], df[y], degree)
+            coeffs = np.polyfit(x_vals, y_vals, degree)
             poly = np.poly1d(coeffs)
-
-            xs = np.linspace(df[x].min(), df[x].max(), 200)
+            xs = np.linspace(x_vals.min(), x_vals.max(), 200)
             ys = poly(xs)
 
-            plt.plot(xs, ys, color="red")
-            plt.title(f"Regression Plot ({degree}-degree): {x} vs {y}")
+            ax.plot(xs, ys, color="red", linewidth=2)
+            ax.set_title(f"Regression Plot ({degree}-degree): {x} vs {y}")
+            ax.set_xlabel(x)
+            ax.set_ylabel(y)
 
-            filename = _generate_chart_filename("regression")
-            filepath = os.path.join(CHART_DIR, filename)
-            plt.savefig(filepath, bbox_inches="tight")
-            plt.close()
+            analysis_result["regression_coefficients"] = coeffs.tolist()
+            summary = f"Regression plot (degree {degree}) generated for '{x}' vs '{y}'."
 
+        else:
+            plt.close(fig)
             return {
-                "status": "success",
-                "analysis_type": "regression",
+                "status": "error",
+                "analysis_type": "none",
                 "df_name": df_name,
-                "image_path": filepath,
-                "summary": f"{degree}-degree regression plot generated for '{x}' vs '{y}'."
+                "analysis_result": {},
+                "summary": f"Unknown analysis_type '{analysis_type}'."
             }
 
-        # -------------------------------------------------
-        # UNKNOWN ANALYSIS TYPE
-        # -------------------------------------------------
-        return {
-            "status": "error",
-            "message": f"Unknown analysis_type '{analysis_type}'."
+        # Save chart
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        filename = f"{analysis_type}_{timestamp}.png"
+        filepath = os.path.join(CHART_DIR, filename)
+        fig.savefig(filepath, bbox_inches="tight")
+        plt.close(fig)
+
+        analysis_result["image_path"] = filepath
+
+        response = {
+            "status": "success",
+            "analysis_type": analysis_type,
+            "analysis_result": analysis_result,
+            "summary": summary
         }
+        response.update(_base_metadata(df_name, df))
+        return response
 
     except Exception as e:
         return {
             "status": "error",
-            "message": str(e)
+            "analysis_type": analysis_type,
+            "df_name": df_name,
+            "analysis_result": {},
+            "summary": f"Visual engineering tool error: {str(e)}"
         }
+

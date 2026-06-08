@@ -11,7 +11,7 @@ def get_all_customers():
         c.phone, 
         c.risk_tier 
     FROM customers c
-    LIMIT 15;"""
+    LIMIT 20;"""
   
     return execute_sql(sql)
 
@@ -134,8 +134,3 @@ def get_customer_latest_risk(customer_id: int):
 def run_sql_query(query: str):
     return execute_sql(query) 
 
-TOOL_REGISTRY = {
-    "get_all_customers": get_all_customers,
-    "get_customer_overview": get_customer_overview,
-    "run_sql_query": run_sql_query
-}
