@@ -32,57 +32,56 @@ Generates visual insights such as monthly trends, category breakdown, and scatte
 Returns a profile of a specific customer, including spend patters and recent activity.
 
 ## Tech Stack
-Python / Flask backend
-Mistral LLM Agent loop
-SQL database
-Custom analytics tools
-HTML/CSS/Javascript frontend
+- **Python / FastAPI backend** - core agentic logic, tool ochestration, SQL execution, analytics pipeline
+- **Flask** - lightweight web layer that serves the UI and forwards user queries to FastAPI 
+- **Mistral LLM Agent loop** - natural-language understanding, SQL generation, and reasoning 
+- **SQL database** - transactional and analytical data source
+- **Custom analytics tools** - statistical analysis, anomaly detection, visual insights
+- **HTML/CSS/Javascript frontend** - chat interface, SQL viewer, preview table analysis panel
 
+## Project Structure
+```text
+app/
+├── agent/
+│   ├── agent.py
+│   ├── agent_config.py
+│   └── tools/
+│       └── agent_tools.py
+├── fastapi_app/
+│   └── main.py
+├── routes/
+│   ├── app.py
+│   ├── clear_chat.py
+│   ├── db_tests.py
+│   └── home.py
+├── services/
+│   ├── analytics.py
+│   ├── explainability.py
+│   └── risk_model.py
+├── templates/
+│   └── index.html
+├── static/
+│   ├── charts/
+│   ├── css/
+│   │   └── styles.css
+│   └── js/
+│       └── app.py
+├── db/
+│   ├── connection.py
+│   └── queries.py
+└── tests/
+    ├── sql_test.py
+    ├── test_agent.py
+    ├── test_chat.py
+    ├── test_stats.py
+    ├── test_visuals.py
+    └── test_tools.py
 
-
-## 🗂️ Project Structure
-/app  
-  /agent  
-    agent.py  
-    agent_config.py
-    tools/
-      agent_tools.py
-   fastapi_app/
-      main.py
-   routes/
-      app.py
-      clear_chat.py
-      db_tests.py
-      home.py
-   logs/
-   services/
-      analytics.py
-      explainability.py
-      risk_model.py
-   templates/
-      index.html
-   /static  
-      charts/
-      css/
-         styles.css
-      js/
-         app.py
-   /db  
-      connection.py
-      queries.py
-   tests/
-      sql_test.py
-      test_agent.py
-      test_chat.py
-      test_stats.py
-      test_visuals.py
-      test_tools.py
-   main.py
 logs/
-DockerFiles
+DockerFiles/
 README.md
 requirements.txt
-
+```
 
 ## Running the Project (GitHub Download)
 1. Clone the repo  
@@ -110,15 +109,15 @@ requirements.txt
    http://localhost:5000
 
 ## Example Queries
-"Show me monthly sepnd for customer 4"
-"Find anomalies in the last 30 days"
-"Give me summart statistics for the last 12 months of transactions"
-"Compare groceries vs shapping for customer 3"
-"Plot entertainment spend over the last 12 months"
+- "Show me monthly sepnd for customer 4"
+- "Find anomalies in the last 30 days"
+- "Give me summart statistics for the last 12 months of transactions"
+- "Compare groceries vs shapping for customer 3"
+- "Plot entertainment spend over the last 12 months"
 
 ## Future Enhancements
 - Additional visualisations 
-- Risk scoring and fruad-pattern detections
+- Risk scoring and fraud-pattern detection
 - Customer segmentation  
 - Export to CSV  
 - Additional analytics tools  
