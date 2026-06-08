@@ -1,54 +1,90 @@
-# 🏦 Banking Analytics Assistant
-A lightweight natural‑language analytics tool that turns user questions into SQL queries, executes them, and returns clear insights through a clean chat‑style UI.
+# Banking Analytics Assistant
+A AI‑powered financial analytics assistant that turns natural‑language questions into SQL, statistical analysis, anomaly detection, and visual insights. It is designed for business users who understand their data and context — but may not have SQL or Python skills.
 
-## 🚀 Overview
-Users can ask questions like:
-- List the accounts for a customer
-- Show monthly spend
-- View alerts
-- Summarise financial activity
+Across organisations, analysts often rely on technical teams to access data through a “front door” process. Athena removes this bottleneck by democratising access to analytics. Users can explore data, run analysis, and generate insights without writing a single line of code.
 
-The system:
-1. Interprets the question  
-2. Runs the correct SQL tool  
-3. Returns SQL + results  
-4. Generates a readable explanation  
-5. Displays everything in a modern UI  
+## Key Features
+### Natural language to SQL
+Ask questions in plain english - the tool generates and executes the SQL automatically.
+### Automated statistical analysis
+Summary statistics, percentiles, distributions, and descriptive metrics.
+### Anomaly detection
+Z-score based detection of unusual transations or outliers.
+### Visual analysis
+Monthly trents, cagetory breakdowns, (under development: scatter plots, regression lines and more)
+### Customer insights
+Tools for retrieving customer lists and individual customer overviews.
+### DataFrame registry
+Each SQL query registers a DataFrame, enabling multi-step reasoning and follow-up questions. 
+### Clean, intuitive UI
+Right-panel toggles for SQL, preview, and detailed analysis. Left-panel holds the user-agent chat.
+### Agentic workflow
+Mistral LLM orchestrates tools, executes SQL, runs analysis, and summarises insights
 
-## 🧠 Architecture
-Frontend:
-- HTML/CSS/JS (no frameworks)
-- Chat interface with Markdown rendering
-- Dark mode toggle
-- Thinking animation
-- SQL show/hide panel
-- Auto‑generated results table
+## Tools
+### run_sql_query
+Executes SQL against the database and registers the resulting DataFrame.
+### generate_statistical_analysis
+Computes summary statistics, percentiles and descriptiive metrics.
+### generate_visual_analysis
+Generates visual insights such as monthly trends, category breakdown, and scatter plots
+### get customer_overview
+Returns a profile of a specific customer, including spend patters and recent activity.
 
-Backend:
-- Python + Flask
-- Agent loop with session history
-- Tool‑driven SQL execution
-- SQLite database (banking.db)
+## Tech Stack
+Python / Flask backend
+Mistral LLM Agent loop
+SQL database
+Custom analytics tools
+HTML/CSS/Javascript frontend
 
-Agent:
-- System prompt + tool registry
-- Executes SQL through Python tools
-- Produces structured, readable responses
+
 
 ## 🗂️ Project Structure
 /app  
   /agent  
     agent.py  
-    tools.py  
-    system_prompt.py  
-  /static  
-    index.html  
-  /db  
-    banking.db  
-app.py  
-README.md  
+    agent_config.py
+    tools/
+      agent_tools.py
+   fastapi_app/
+      main.py
+   routes/
+      app.py
+      clear_chat.py
+      db_tests.py
+      home.py
+   logs/
+   services/
+      analytics.py
+      explainability.py
+      risk_model.py
+   templates/
+      index.html
+   /static  
+      charts/
+      css/
+         styles.css
+      js/
+         app.py
+   /db  
+      connection.py
+      queries.py
+   tests/
+      sql_test.py
+      test_agent.py
+      test_chat.py
+      test_stats.py
+      test_visuals.py
+      test_tools.py
+   main.py
+logs/
+DockerFiles
+README.md
+requirements.txt
 
-## 📥 Running the Project (GitHub Download)
+
+## Running the Project (GitHub Download)
 1. Clone the repo  
    git clone https://github.com/<your-username>/<repo-name>.git  
    cd <repo-name>
@@ -66,23 +102,32 @@ README.md
    export MISTRAL_API_KEY="your-key" (macOS/Linux)  
    set MISTRAL_API_KEY="your-key" (Windows)
 
-5. Start the server  
-   python main.py
+5. Start the server and flask
+   uvicorn app.fastapi_app.main:app
+   python -m flask --app app.main run
 
 6. Open the UI  
    http://localhost:5000
 
-## 🧪 Example Flow
-User: “Show monthly spend for customer 5”  
-Agent: Runs SQL → returns rows → generates Markdown summary → UI renders formatted table + insights.
+## Example Queries
+"Show me monthly sepnd for customer 4"
+"Find anomalies in the last 30 days"
+"Give me summart statistics for the last 12 months of transactions"
+"Compare groceries vs shapping for customer 3"
+"Plot entertainment spend over the last 12 months"
 
-## 📈 Future Enhancements
-- Inline charts  
-- Multi‑customer comparisons  
+## Future Enhancements
+- Additional visualisations 
+- Risk scoring and fruad-pattern detections
+- Customer segmentation  
 - Export to CSV  
-- Authentication  
 - Additional analytics tools  
+- Natural language chart editing
+- UI improvements
 
-## 👤 Author
+## Author
 Built by Kiernan — aspiring AI Platform Engineer & full‑stack developer.
 Designed for clarity, maintainability, and a smooth demo experience.
+
+## License
+MIT License
