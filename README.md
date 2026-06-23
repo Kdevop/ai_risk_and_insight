@@ -125,8 +125,11 @@ requirements.txt
 - UI improvements
 
 ## Author
-Built by Kiernan — aspiring AI Platform Engineer & full‑stack developer.
+Built by Kiernan — aspiring AI Business Analyst with background in project management and change.
 Designed for clarity, maintainability, and a smooth demo experience.
 
 ## License
 MIT License
+
+## Supporting Docs
+See agentic_ai_insights_platform_brd.pdf for further details on the project
