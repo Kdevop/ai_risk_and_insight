@@ -356,4 +356,3 @@ def generate_visual_analysis(
             "summary": f"Visual engineering tool error: {str(e)}"
         }
 
- 
