@@ -3,7 +3,7 @@ import logging
 import re
 from decimal import Decimal
 from datetime import datetime, date
-from app.services.analytics import register_sql_result
+from app.services.data_access import register_sql_result
 
 logger = logging.getLogger(__name__)
 
