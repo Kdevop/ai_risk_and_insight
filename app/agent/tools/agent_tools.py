@@ -1,5 +1,6 @@
 from app.db.queries import execute_sql
 
+# 1. GET ALL CUSTOMERS
 def get_all_customers():
     print("Executing get_all_customers tool")
     sql = f"""
@@ -15,7 +16,7 @@ def get_all_customers():
   
     return execute_sql(sql)
 
-# 1. CUSTOMER OVERVIEW
+# 2. CUSTOMER OVERVIEW
 def get_customer_overview(customer_id: int):
     sql = f"""
     SELECT 
@@ -34,103 +35,7 @@ def get_customer_overview(customer_id: int):
     """
     return execute_sql(sql)
 
-# 2. CUSTOMER ACCOUNTS
-def get_customer_accounts(customer_id: int):
-    sql = f"""
-    SELECT 
-        account_id,
-        account_type,
-        balance,
-        opened_at
-    FROM accounts
-    WHERE customer_id = {customer_id}
-    ORDER BY opened_at DESC;
-    """
-    return execute_sql(sql)
-
-# 3. TOTAL BALANCE
-def get_total_balance(customer_id: int):
-    sql = f"""
-    SELECT 
-        SUM(balance) AS total_balance
-    FROM accounts
-    WHERE customer_id = {customer_id};
-    """
-    return execute_sql(sql)
-
-
-# 4. TOTAL SPEND
-def get_total_spend(customer_id: int):
-    sql = f"""
-    SELECT 
-        SUM(t.amount) AS total_spend
-    FROM transactions t
-    JOIN accounts a ON t.account_id = a.account_id
-    WHERE a.customer_id = {customer_id};
-    """
-    return execute_sql(sql)
-
-
-# 5. MONTHLY SPEND
-def get_monthly_spend(customer_id: int):
-    sql = f"""
-    SELECT 
-        TO_CHAR(t.timestamp, 'YYYY-MM') AS month,
-        SUM(t.amount) AS total_spend
-    FROM transactions t
-    JOIN accounts a ON t.account_id = a.account_id
-    WHERE a.customer_id = {customer_id}
-    GROUP BY month
-    ORDER BY month DESC
-    LIMIT 12;
-    """
-    return execute_sql(sql)
-
-
-# 6. SPEND BY CATEGORY
-def get_spend_by_category(customer_id: int):
-    sql = f"""
-    SELECT 
-        t.category,
-        SUM(t.amount) AS total_spend
-    FROM transactions t
-    JOIN accounts a ON t.account_id = a.account_id
-    WHERE a.customer_id = {customer_id}
-    GROUP BY t.category
-    ORDER BY total_spend DESC;
-    """
-    return execute_sql(sql)
-
-# 7. CUSTOMER ALERTS
-def get_customer_alerts(customer_id: int):
-    sql = f"""
-    SELECT 
-        alert_id,
-        alert_type,
-        severity,
-        created_at,
-        resolved
-    FROM alerts
-    WHERE customer_id = {customer_id}
-    ORDER BY created_at DESC;
-    """
-    return execute_sql(sql)
-
-# 8. LATEST RISK SCORE
-def get_customer_latest_risk(customer_id: int):
-    sql = f"""
-    SELECT 
-        score_type,
-        score,
-        generated_at
-    FROM risk_scores
-    WHERE customer_id = {customer_id}
-    ORDER BY generated_at DESC
-    LIMIT 3;
-    """
-    return execute_sql(sql)
-
-# 9. AGENT WRITEN CUSTOM SQL
+# 3. AGENT WRITEN CUSTOM SQL
 def run_sql_query(query: str):
     return execute_sql(query) 
 

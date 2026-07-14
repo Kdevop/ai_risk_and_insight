@@ -15,6 +15,14 @@ from app.services.analytics import (
     generate_visual_analysis,
 )
 
+from app.services.risk import (
+    calculate_volatility,
+    calculate_balance_trend,
+    calculate_product_diversity,
+    calculate_num_anomalies,
+    calculate_risk_score
+)
+
 load_dotenv()
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
 
@@ -25,8 +33,12 @@ TOOL_REGISTRY = {
     "run_sql_query": run_sql_query,
     "generate_statistical_analysis": generate_statistical_analysis,
     "generate_visual_analysis": generate_visual_analysis,
+    "calculate_volatility": calculate_volatility,
+    "calculate_balance_trend": calculate_balance_trend,
+    "calculate_product_diversity": calculate_product_diversity,
+    "calculate_num_anomalies": calculate_num_anomalies,
+    "calculate_risk_score": calculate_risk_score
 }
-
 
 def run_agent(user_message: str, chat_history: list[dict]):
 

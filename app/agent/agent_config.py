@@ -87,7 +87,7 @@ Do NOT add commentary before or after the JSON.
   "columns": ["col1", "col2"],
   "preview": [["val1", "val2"], ["val3", "val4"]],
   "row_count": 0,
-  "analysis_type": "summary_stats | correlation | anomaly_detection | monthly_trend | category_breakdown | none",
+  "analysis_type": "summary_stats | correlation | anomaly_detection | monthly_trend | category_breakdown | product_diversity | volatility | none",
   "analysis_result": {},
   "insights": [
     "Key analytical insight 1",
@@ -117,6 +117,28 @@ You MUST call generate_statistical_analysis when:
 You MUST call generate_visual_analysis when:
 - User asks for trends (requires "date_column" and "value_column" in the DataFrame).
 - User asks for category breakdown (requires "category_column" and "value_column" in the DataFrame).
+- The user asks for charts, plots, visualisations, or graphs.
+
+You MUST call calculate_volatility when:
+- The user asks for volatility, spending volatility, variability of spending, or how volatile a customer is.
+- The DataFrame contains an "amount" column. If not, you MUST call run_sql_query first.
+
+You MUST call calculate_balance_trend when:
+- The user asks for balance trend, balance trajectory, or whether the balance is increasing or decreasing.
+- Requires transactions (with timestamp) AND accounts (with balance). If missing, you MUST call run_sql_query.
+
+You MUST call calculate_product_diversity when:
+- The user asks for product diversity, product mix, or how diverse their products are.
+- Requires customer_products (with product_id) AND products (with product_id + category). If missing, you MUST call run_sql_query.
+
+You MUST call calculate_num_anomalies when:
+- The user asks for number of anomalies, anomaly count, or how many anomalies exist.
+- Requires an "amount" column. If missing, you MUST call run_sql_query.
+
+You MUST call calculate_risk_score when:
+- The user asks for risk score, customer risk, overall risk, risk assessment, risk level, or risk analysis.
+- Requires transactions, accounts, products, and customer_products DataFrames. If any are missing, you MUST call run_sql_query.
+- You MUST NOT call extract_features directly.
 
 You MUST NEVER:
 - Say “I don't have the capability…”
@@ -253,6 +275,86 @@ TOOLS = [
                     "degree": {"type": "number"}
                 },
                 "required": ["df_name", "analysis_type"]
+            }
+        }
+    }, 
+
+    {
+        "type": "function",
+        "function": {
+            "name": "calculate_volatility",
+            "description": "Calculate volatility of transaction amounts using a stored transactions DataFrame.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "df_name": { "type": "string", "description": "Name of the transactions DataFrame." }
+                },
+                "required": ["df_name"]
+            }
+        }
+    },
+
+    {
+        "type": "function",
+        "function": {
+            "name": "calculate_balance_trend",
+            "description": "Calculate balance trend using cumulative balances derived from transactions and accounts DataFrames.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "df_name": { "type": "string", "description": "Name of the transactions DataFrame." },
+                    "accounts_df_name": { "type": "string", "description": "Name of the accounts DataFrame." }
+                },
+                "required": ["df_name", "accounts_df_name"]
+            }
+        }
+    },
+
+    {
+        "type": "function",
+        "function": {
+            "name": "calculate_product_diversity",
+            "description": "Calculate product diversity based on customer product ownership and available product categories.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "customer_products_df_name": { "type": "string", "description": "Name of the customer_products DataFrame." },
+                    "products_df_name": { "type": "string", "description": "Name of the products DataFrame." }
+                },
+                "required": ["customer_products_df_name", "products_df_name"]
+            }
+        }
+    },
+
+    {
+        "type": "function",
+        "function": {
+            "name": "calculate_num_anomalies",
+            "description": "Count anomalies in a transactions DataFrame using z-score anomaly detection.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "df_name": { "type": "string", "description": "Name of the transactions DataFrame." }
+                },
+                "required": ["df_name"]
+            }
+        }
+    },
+
+    {
+        "type": "function",
+        "function": {
+            "name": "calculate_risk_score",
+            "description": "Calculate a weighted risk score and factor contributions using all required DataFrames.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "tx_df_name": { "type": "string" },
+                    "accounts_df_name": { "type": "string" },
+                    "products_df_name": { "type": "string" },
+                    "customer_products_df_name": { "type": "string" }
+                },
+                "required": ["tx_df_name", "accounts_df_name", "products_df_name", "customer_products_df_name"]
             }
         }
     }
