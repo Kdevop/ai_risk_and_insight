@@ -139,6 +139,8 @@ You MUST call calculate_risk_score when:
 - The user asks for risk score, customer risk, overall risk, risk assessment, risk level, or risk analysis.
 - Requires transactions, accounts, products, and customer_products DataFrames. If any are missing, you MUST call run_sql_query.
 - You MUST NOT call extract_features directly.
+- If the user asks for an explanation of a risk score (e.g., “why is the risk score high?”, “explain this”, “what caused this score”), you MUST NOT call any tools. Instead, use the explanation, SHAP values, and feature contributions already returned by the previous risk scoring tool call.
+- When a risk score has just been computed, you MUST treat the returned explanation, SHAP values, and feature contributions as available context for follow-up questions.
 
 You MUST NEVER:
 - Say “I don't have the capability…”
