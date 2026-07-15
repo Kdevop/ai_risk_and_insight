@@ -70,11 +70,20 @@ features = extract_features(
 print(features)
 
 print("\n=== Risk: Full Risk Score ===")
-score, contributions = calculate_risk_score(
+result = calculate_risk_score(
     tx_df_name,
     accounts_df_name,
     products_df_name,
     customer_products_df_name
 )
+
+score = result["analysis_result"]["risk_score"]
+contributions = result["analysis_result"]["contributions"]
+explanation = result["analysis_result"]["explanation"]
+shap_values = result["analysis_result"]["shap_values"]
+
 print("Score:", score)
 print("Contributions:", contributions)
+print("Explanation:", explanation)
+print("SHAP Values:", shap_values)
+

@@ -4,6 +4,7 @@ from sklearn.linear_model import LinearRegression
 
 from app.services.data_access import get_dataframe
 from app.services.analytics import generate_statistical_analysis
+from app.services.explainability import explain_risk_score
 
 # ---------------------------------------------------------
 # RISK ANALYSIS TOOLS
@@ -228,12 +229,17 @@ def calculate_risk_score(tx_df_name, accounts_df_name, products_df_name, custome
     # Linear scale offset based on weights
     final_score = max(0.0, min(100.0, round((score * 10) + 50, 2)))
 
-    # Return structured dict matching prompt expectations
+    # SHAP explainability (no recomputation)
+    shap_output = explain_risk_score(raw_metrics, final_score, weights)
+
     return {
-        "analysis_type": "risk_score",  # Ensure "risk_score" is added to your system prompt's allowed enums
+        "analysis_type": "risk_score",
         "analysis_result": {
             "risk_score": final_score,
             "contributions": contributions,
-            "raw_features": raw_metrics
+            "raw_features": raw_metrics,
+            "shap_values": shap_output["shap_values"],
+            "expected_value": shap_output["expected_value"],
+            "explanation": shap_output["summary"]
         }
     }
